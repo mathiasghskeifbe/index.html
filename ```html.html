@@ -1,0 +1,394 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Organizador IA</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #080b14;
+    color: white;
+    min-height: 100vh;
+}
+
+header {
+    padding: 35px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #111936, #17112d);
+    border-bottom: 1px solid #293250;
+}
+
+header h1 {
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+header p {
+    color: #aab3ca;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+.add-box {
+    background: #111729;
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 25px;
+    border: 1px solid #252e4a;
+}
+
+.add-box h2 {
+    margin-bottom: 15px;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #303b5c;
+    background: #080d1b;
+    color: white;
+    outline: none;
+    font-size: 16px;
+}
+
+button {
+    border: none;
+    padding: 15px 22px;
+    border-radius: 10px;
+    background: #5865f2;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #7280ff;
+}
+
+.ai-status {
+    margin-top: 12px;
+    color: #8e9bb8;
+    font-size: 14px;
+}
+
+.categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 18px;
+}
+
+.category {
+    background: #111729;
+    border: 1px solid #252e4a;
+    border-radius: 18px;
+    padding: 20px;
+    min-height: 210px;
+}
+
+.category h2 {
+    margin-bottom: 15px;
+}
+
+.item {
+    background: #1a2238;
+    border-radius: 10px;
+    padding: 13px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.delete {
+    background: #e74c3c;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.school {
+    border-top: 4px solid #2ecc71;
+}
+
+.games {
+    border-top: 4px solid #ff4757;
+}
+
+.pc {
+    border-top: 4px solid #3498db;
+}
+
+.mobile {
+    border-top: 4px solid #9b59b6;
+}
+
+.other {
+    border-top: 4px solid #f1c40f;
+}
+
+@media(max-width: 650px) {
+    .input-area {
+        flex-direction: column;
+    }
+
+    header h1 {
+        font-size: 30px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🤖 Organizador IA</h1>
+    <p>Organiza automáticamente tus cosas de PC, móvil, escuela y juegos.</p>
+</header>
+
+<div class="container">
+
+    <div class="add-box">
+
+        <h2>➕ Agregar algo</h2>
+
+        <div class="input-area">
+            <input
+                id="input"
+                type="text"
+                placeholder="Ej: estudiar matemáticas mañana"
+            >
+
+            <button onclick="organizar()">
+                ✨ Organizar con IA
+            </button>
+        </div>
+
+        <div class="ai-status" id="status">
+            IA lista para organizar...
+        </div>
+
+    </div>
+
+
+    <div class="categories">
+
+        <div class="category school">
+            <h2>📚 Escuela</h2>
+            <div id="school"></div>
+        </div>
+
+        <div class="category games">
+            <h2>🎮 Juegos</h2>
+            <div id="games"></div>
+        </div>
+
+        <div class="category pc">
+            <h2>💻 PC</h2>
+            <div id="pc"></div>
+        </div>
+
+        <div class="category mobile">
+            <h2>📱 Móvil</h2>
+            <div id="mobile"></div>
+        </div>
+
+        <div class="category other">
+            <h2>📦 Otros</h2>
+            <div id="other"></div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function organizar() {
+
+    const input = document.getElementById("input");
+    const status = document.getElementById("status");
+
+    const texto = input.value.trim();
+
+    if (texto === "") {
+        status.textContent = "⚠️ Escribe algo primero.";
+        return;
+    }
+
+    status.textContent = "🤖 Analizando y organizando...";
+
+    setTimeout(() => {
+
+        const categoria = detectarCategoria(texto);
+
+        agregarElemento(texto, categoria);
+
+        status.textContent =
+            "✅ Organizado automáticamente en: " + categoria;
+
+        input.value = "";
+
+    }, 500);
+}
+
+
+function detectarCategoria(texto) {
+
+    const t = texto.toLowerCase();
+
+    const escuela = [
+        "tarea",
+        "examen",
+        "estudiar",
+        "escuela",
+        "colegio",
+        "matemáticas",
+        "matematicas",
+        "ingles",
+        "inglés",
+        "clase",
+        "profesor",
+        "deber",
+        "trabajo escolar",
+        "historia",
+        "ciencia"
+    ];
+
+    const juegos = [
+        "fortnite",
+        "roblox",
+        "minecraft",
+        "valorant",
+        "juego",
+        "gaming",
+        "steam",
+        "jugar",
+        "partida"
+    ];
+
+    const pc = [
+        "pc",
+        "computadora",
+        "windows",
+        "gpu",
+        "cpu",
+        "ram",
+        "monitor",
+        "teclado",
+        "mouse",
+        "driver",
+        "programar",
+        "programación",
+        "programacion"
+    ];
+
+    const movil = [
+        "celular",
+        "móvil",
+        "movil",
+        "telefono",
+        "teléfono",
+        "android",
+        "iphone",
+        "whatsapp",
+        "app",
+        "aplicación",
+        "aplicacion"
+    ];
+
+
+    if (contiene(t, escuela)) {
+        return "Escuela";
+    }
+
+    if (contiene(t, juegos)) {
+        return "Juegos";
+    }
+
+    if (contiene(t, pc)) {
+        return "PC";
+    }
+
+    if (contiene(t, movil)) {
+        return "Móvil";
+    }
+
+    return "Otros";
+}
+
+
+function contiene(texto, palabras) {
+
+    return palabras.some(palabra =>
+        texto.includes(palabra)
+    );
+
+}
+
+
+function agregarElemento(texto, categoria) {
+
+    const mapa = {
+        "Escuela": "school",
+        "Juegos": "games",
+        "PC": "pc",
+        "Móvil": "mobile",
+        "Otros": "other"
+    };
+
+    const contenedor =
+        document.getElementById(mapa[categoria]);
+
+    const item = document.createElement("div");
+
+    item.className = "item";
+
+    item.innerHTML = `
+        <span>${texto}</span>
+
+        <button
+            class="delete"
+            onclick="this.parentElement.remove()">
+            X
+        </button>
+    `;
+
+    contenedor.appendChild(item);
+}
+
+
+document.getElementById("input")
+.addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+        organizar();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
+```
